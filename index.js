@@ -9,6 +9,7 @@ var __assign = (this && this.__assign) || function () {
     };
     return __assign.apply(this, arguments);
 };
+// Reducer functions
 function todos(state, action) {
     if (state === void 0) { state = []; }
     switch (action.type) {
@@ -80,81 +81,92 @@ function createStore(reducer) {
     };
 }
 // Implementation of state management function
+var ADD_TODO = "ADD_TODO";
+var REMOVE_TODO = "REMOVE_TODO";
+var TOGGLE_TODO = "TOGGLE_TODO";
+var ADD_GOAL = "ADD_GOAL";
+var REMOVE_GOAL = "REMOVE_GOAL";
+var TOGGLE_GOAL = "TOGGLE_GOAL";
+// Action creator functions
+function addTodo(todo) {
+    return {
+        type: ADD_TODO,
+        payload: todo
+    };
+}
+function removeTodo(id) {
+    return {
+        type: REMOVE_TODO,
+        payload: {
+            id: id
+        }
+    };
+}
+function toggleTodo(id) {
+    return {
+        type: TOGGLE_TODO,
+        payload: {
+            id: id
+        }
+    };
+}
+function addGoal(goal) {
+    return {
+        type: ADD_GOAL,
+        payload: goal
+    };
+}
+function removeGoal(id) {
+    return {
+        type: REMOVE_GOAL,
+        payload: {
+            id: id
+        }
+    };
+}
+function toggleGoal(id) {
+    return {
+        type: TOGGLE_GOAL,
+        payload: {
+            id: id
+        }
+    };
+}
 var store = createStore(app);
 var unsubscribe = store.subscribe(function () {
     return console.log("The state is: ".concat(store.getState()));
 });
-store.dispatch({
-    type: "ADD_TODO",
-    payload: {
-        id: 0,
-        name: "My first todo",
-        complete: false
-    }
-});
-store.dispatch({
-    type: "ADD_TODO",
-    payload: {
-        id: 1,
-        name: "My second todo",
-        complete: false
-    }
-});
-store.dispatch({
-    type: "ADD_TODO",
-    payload: {
-        id: 2,
-        name: "My third todo",
-        complete: false
-    }
-});
-store.dispatch({
-    type: "TOGGLE_TODO",
-    payload: {
-        id: 0,
-        name: "My first todo",
-        complete: true
-    }
-});
-store.dispatch({
-    type: "REMOVE_TODO",
-    payload: {
-        id: 1
-    }
-});
-store.dispatch({
-    type: "ADD_GOAL",
-    payload: {
-        id: 0,
-        name: "My first Goal",
-        complete: false
-    }
-});
-store.dispatch({
-    type: "ADD_GOAL",
-    payload: {
-        id: 1,
-        name: "My second Goal",
-        complete: false
-    }
-});
-store.dispatch({
-    type: "ADD_GOAL",
-    payload: {
-        id: 2,
-        name: "My third Goal",
-        complete: false
-    }
-});
-store.dispatch({
-    type: "REMOVE_GOAL",
-    payload: {
-        id: 1
-    }
-});
-store.dispatch({
-    type: "TOGGLE_GOAL",
-    payload: {
-        id: 0
-    }
-});
+store.dispatch(addTodo({
+    id: 0,
+    name: "My first todo",
+    complete: false
+}));
+store.dispatch(addTodo({
+    id: 1,
+    name: "My second todo",
+    complete: false
+}));
+store.dispatch(addTodo({
+    id: 2,
+    name: "My third todo",
+    complete: false
+}));
+store.dispatch(toggleTodo(0));
+store.dispatch(removeTodo(1));
+store.dispatch(addGoal({
+    id: 0,
+    name: "My first Goal",
+    complete: false
+}));
+store.dispatch(addGoal({
+    id: 1,
+    name: "My second Goal",
+    complete: false
+}));
+store.dispatch(addGoal({
+    id: 2,
+    name: "My third Goal",
+    complete: false
+}));
+store.dispatch(toggleGoal(0));
+store.dispatch(removeGoal(1));
