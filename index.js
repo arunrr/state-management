@@ -1,10 +1,30 @@
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 function todos(state, action) {
     if (state === void 0) { state = []; }
-    if (action.type === "ADD_TODO") {
-        state = state.filter(function (item) { return action.payload.id !== item.id; });
-        state = state.concat(action.payload);
+    switch (action.type) {
+        case "ADD_TODO":
+            return state.concat(action.payload);
+        case "REMOVE_TODO":
+            return state.filter(function (item) { return item.id !== action.payload.id; });
+        case "TOGGLE_TODO":
+            return state.map(function (item) {
+                return item.id !== action.payload.id
+                    ? item
+                    : __assign(__assign({}, item), { complete: !item.complete });
+            });
+        default:
+            return state;
     }
-    return state;
 }
 // State management function
 function createStore(reducer) {
@@ -56,8 +76,22 @@ store.dispatch({
 store.dispatch({
     type: "ADD_TODO",
     payload: {
+        id: 2,
+        name: "My third todo",
+        complete: false
+    }
+});
+store.dispatch({
+    type: "TOGGLE_TODO",
+    payload: {
         id: 0,
         name: "My first todo",
         complete: true
+    }
+});
+store.dispatch({
+    type: "REMOVE_TODO",
+    payload: {
+        id: 1
     }
 });

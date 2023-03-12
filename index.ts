@@ -2,20 +2,28 @@ type Action = {
   type: string;
   payload: {
     id: number;
-    name: string;
-    complete: boolean;
+    name?: string;
+    complete?: boolean;
   };
 };
 
 type State = Action["payload"][];
 
 function todos(state: State = [], action: Action) {
-  if (action.type === "ADD_TODO") {
-    state = state.filter((item) => action.payload.id !== item.id);
-    state = state.concat(action.payload);
+  switch (action.type) {
+    case "ADD_TODO":
+      return state.concat(action.payload);
+    case "REMOVE_TODO":
+      return state.filter((item) => item.id !== action.payload.id);
+    case "TOGGLE_TODO":
+      return state.map((item) =>
+        item.id !== action.payload.id
+          ? item
+          : { ...item, complete: !item.complete }
+      );
+    default:
+      return state;
   }
-
-  return state;
 }
 
 // State management function
@@ -79,8 +87,24 @@ store.dispatch({
 store.dispatch({
   type: "ADD_TODO",
   payload: {
+    id: 2,
+    name: "My third todo",
+    complete: false,
+  },
+});
+
+store.dispatch({
+  type: "TOGGLE_TODO",
+  payload: {
     id: 0,
     name: "My first todo",
     complete: true,
+  },
+});
+
+store.dispatch({
+  type: "REMOVE_TODO",
+  payload: {
+    id: 1,
   },
 });
