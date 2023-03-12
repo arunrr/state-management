@@ -1,15 +1,23 @@
-type Action = {
-  type: string;
-  payload: {
-    id: number;
-    name?: string;
-    complete?: boolean;
-  };
+type Payload = {
+  id: number;
+  name?: string;
+  complete?: boolean;
 };
 
-type State = Action["payload"][];
+type State = {
+  todos: Payload[];
+  goals: Payload[];
+};
 
-function todos(state: State = [], action: Action) {
+type Action = {
+  type: string;
+  payload: Payload;
+};
+
+type TodoState = State["todos"];
+type GoalState = State["goals"];
+
+function todos(state: TodoState = [], action: Action) {
   switch (action.type) {
     case "ADD_TODO":
       return state.concat(action.payload);
@@ -26,6 +34,36 @@ function todos(state: State = [], action: Action) {
   }
 }
 
+function goals(state: GoalState = [], action: Action) {
+  switch (action.type) {
+    case "ADD_GOAL":
+      return state.concat(action.payload);
+    case "REMOVE_GOAL":
+      return state.filter((item) => item.id !== action.payload.id);
+    case "TOGGLE_GOAL":
+      return state.map((item) =>
+        item.id !== action.payload.id
+          ? item
+          : { ...item, complete: !item.complete }
+      );
+    default:
+      return state;
+  }
+}
+
+function app(
+  state: State = {
+    todos: [],
+    goals: [],
+  },
+  action: Action
+): State {
+  return {
+    todos: todos(state["todos"], action),
+    goals: goals(state["goals"], action),
+  };
+}
+
 // State management function
 function createStore(reducer: Function) {
   // State of the application
@@ -34,7 +72,7 @@ function createStore(reducer: Function) {
   let listeners: Function[] = [];
 
   // Get the state info
-  const getState: () => State = () => state;
+  const getState = () => state;
 
   // Subscribe to the state and returns a method to unsubscribe from state
   const subscribe = (listener: Function) => {
@@ -60,7 +98,7 @@ function createStore(reducer: Function) {
 }
 
 // Implementation of state management function
-const store = createStore(todos);
+const store = createStore(app);
 
 const unsubscribe = store.subscribe(() =>
   console.log(`The state is: ${store.getState()}`)
@@ -106,5 +144,46 @@ store.dispatch({
   type: "REMOVE_TODO",
   payload: {
     id: 1,
+  },
+});
+
+store.dispatch({
+  type: "ADD_GOAL",
+  payload: {
+    id: 0,
+    name: "My first Goal",
+    complete: false,
+  },
+});
+
+store.dispatch({
+  type: "ADD_GOAL",
+  payload: {
+    id: 1,
+    name: "My second Goal",
+    complete: false,
+  },
+});
+
+store.dispatch({
+  type: "ADD_GOAL",
+  payload: {
+    id: 2,
+    name: "My third Goal",
+    complete: false,
+  },
+});
+
+store.dispatch({
+  type: "REMOVE_GOAL",
+  payload: {
+    id: 1,
+  },
+});
+
+store.dispatch({
+  type: "TOGGLE_GOAL",
+  payload: {
+    id: 0,
   },
 });

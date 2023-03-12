@@ -26,6 +26,33 @@ function todos(state, action) {
             return state;
     }
 }
+function goals(state, action) {
+    if (state === void 0) { state = []; }
+    switch (action.type) {
+        case "ADD_GOAL":
+            return state.concat(action.payload);
+        case "REMOVE_GOAL":
+            return state.filter(function (item) { return item.id !== action.payload.id; });
+        case "TOGGLE_GOAL":
+            return state.map(function (item) {
+                return item.id !== action.payload.id
+                    ? item
+                    : __assign(__assign({}, item), { complete: !item.complete });
+            });
+        default:
+            return state;
+    }
+}
+function app(state, action) {
+    if (state === void 0) { state = {
+        todos: [],
+        goals: []
+    }; }
+    return {
+        todos: todos(state["todos"], action),
+        goals: goals(state["goals"], action)
+    };
+}
 // State management function
 function createStore(reducer) {
     // State of the application
@@ -53,7 +80,7 @@ function createStore(reducer) {
     };
 }
 // Implementation of state management function
-var store = createStore(todos);
+var store = createStore(app);
 var unsubscribe = store.subscribe(function () {
     return console.log("The state is: ".concat(store.getState()));
 });
@@ -93,5 +120,41 @@ store.dispatch({
     type: "REMOVE_TODO",
     payload: {
         id: 1
+    }
+});
+store.dispatch({
+    type: "ADD_GOAL",
+    payload: {
+        id: 0,
+        name: "My first Goal",
+        complete: false
+    }
+});
+store.dispatch({
+    type: "ADD_GOAL",
+    payload: {
+        id: 1,
+        name: "My second Goal",
+        complete: false
+    }
+});
+store.dispatch({
+    type: "ADD_GOAL",
+    payload: {
+        id: 2,
+        name: "My third Goal",
+        complete: false
+    }
+});
+store.dispatch({
+    type: "REMOVE_GOAL",
+    payload: {
+        id: 1
+    }
+});
+store.dispatch({
+    type: "TOGGLE_GOAL",
+    payload: {
+        id: 0
     }
 });
